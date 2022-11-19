@@ -9,9 +9,10 @@ const AppContext = React.createContext();
 const socket = io.connect('http://localhost:3001/');
 
 function App() {
+  const [peer, setPeer] = useState();
 
   return (
-    <AppContext.Provider value={{ socket }}>
+    <AppContext.Provider value={{ socket, peer, setPeer }}>
       <div id="App">
         <Routes>
           <Route path="/" element={<Login />} />

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../App";
+import { Peer } from "peerjs";
 import "../styles/login.css";
 import { Signup } from "./signUp";
 
@@ -10,6 +11,7 @@ export function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const socket = useAppContext().socket;
+  const setPeer = useAppContext().setPeer;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +23,7 @@ export function Login() {
       else
       {
         localStorage.setItem("id", id);
+        setPeer(new Peer(id));
         navigate("../chat");
       }
     });
