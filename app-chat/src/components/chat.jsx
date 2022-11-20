@@ -9,6 +9,7 @@ export function Chat() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [friendList, setFriendList] = useState([]);
+    const [msg, setMsg] = useState("");
     const navigate = useNavigate();
     const socket = useAppContext().socket;
 
@@ -99,7 +100,11 @@ export function Chat() {
                     <div className="text_area">
                         <input className="choose_file" type="file" />
                         <i className="fa-solid fa-arrow-up-from-bracket"></i>
-                        <input className="text-input" type="text" placeholder="Aa" />
+                        <input
+                            className="text-input"
+                            type="text" placeholder="Aa"
+                            onChange={e => setMsg(e.target.value)}
+                        />
                         <i className="fa-solid fa-arrow-right-to-bracket"></i>
                     </div>
                 </div>

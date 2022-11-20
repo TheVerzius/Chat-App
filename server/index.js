@@ -95,11 +95,27 @@ io.on("connection", socket => {
 
 	socket.on("GET_INFO", id => {
 		let user = userList.filter(item => item.id === id)[0];
-		socket.emit("RES_GET_INFO", {
-			username: user.un,
-			email: user.email,
-			friendList: user.friendList
-		});
+		if (user)
+		{
+			socket.emit("RES_GET_INFO", {
+				username: user.un,
+				email: user.email,
+				friendList: user.friendList
+			});
+		}
+	})
+
+	socket.on("GET_INFO_BY_NAME", name => {
+		let user = userList.filter(item => item.un === name)[0];
+		if (user)
+		{
+			socket.emit("RES_GET_INFO_BY_NAME", {
+				id: user.id,
+				username: user.un,
+				email: user.email,
+				friendList: user.friendList
+			});
+		}
 	})
 
 	socket.on("GET_FRIEND_LIST", data => {

@@ -221,13 +221,13 @@
   color: #fff;
 }
 
-.text_area .choose_file:hover + .fa-arrow-up-from-bracket {
+.text_area .choose_file:hover+.fa-arrow-up-from-bracket {
   color: #ffffff50;
 }
 
 .text_area .fa-arrow-right-to-bracket {
   position: absolute;
-  left: 43em;
+  left: 41em;
   font-size: 3em;
   color: #fff;
   cursor: pointer;
