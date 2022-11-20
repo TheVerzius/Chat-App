@@ -1,3 +1,4 @@
+import { Peer } from "peerjs";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../App";
@@ -12,6 +13,8 @@ export function Chat() {
     const [msg, setMsg] = useState("");
     const navigate = useNavigate();
     const socket = useAppContext().socket;
+    const peer = useAppContext().peer;
+    const setPeer = useAppContext().setPeer;
 
     useEffect(() => {
         socket.on("RES_GET_INFO", data => {
@@ -25,6 +28,17 @@ export function Chat() {
         let id = localStorage.getItem("id");
         console.log("user id: ", id);
         socket.emit("GET_INFO", id);
+    }, [])
+
+    useEffect(() => {
+        peer.on("connection", (conn) => {
+            conn.on("data", (data) => {
+                console.log(data);
+            });
+            conn.on("open", () => {
+                conn.send("hello!");
+            });
+        });
     }, [])
 
     const RenderChatSidebar = () => {
