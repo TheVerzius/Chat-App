@@ -228,6 +228,7 @@
 .text_area .fa-arrow-right-to-bracket {
   /* position: absolute;
   left: 41em; */
+  margin: 0 1em;
   font-size: 3em;
   color: #fff;
   cursor: pointer;

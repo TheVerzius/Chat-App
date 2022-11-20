@@ -11,7 +11,6 @@ export function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const socket = useAppContext().socket;
-  const setPeer = useAppContext().setPeer;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +22,7 @@ export function Login() {
       else
       {
         localStorage.setItem("id", id);
-        setPeer(new Peer(id));
+        // setPeer(new Peer(id));
         navigate("../chat");
       }
     });

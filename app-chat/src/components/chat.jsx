@@ -1,5 +1,6 @@
 import { Peer } from "peerjs";
 import React, { useEffect, useState } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../App";
 import "../styles/chat.css";
@@ -12,9 +13,25 @@ export function Chat() {
     const [friendList, setFriendList] = useState([]);
     const [msg, setMsg] = useState("");
     const navigate = useNavigate();
+    const chatAreaRef = useRef();
+    const [chatList, setChatList] = useState([]);
+
     const socket = useAppContext().socket;
-    const peer = useAppContext().peer;
-    const setPeer = useAppContext().setPeer;
+    const [otherId, setOtherId] = useState(-10);
+    const [peerconn, setPeerconn] = useState();
+    const [peer, setPeer] = useState(() => {
+        let id = localStorage.getItem("id");
+        if (id)
+        {
+            return new Peer(id);
+        }
+        return null;
+    });
+
+    useEffect(() => {
+        console.log("Reconnect to peer", otherId);
+        setPeerconn(peer.connect(otherId));
+    }, [otherId])
 
     useEffect(() => {
         socket.on("RES_GET_INFO", data => {
@@ -32,14 +49,20 @@ export function Chat() {
 
     useEffect(() => {
         peer.on("connection", (conn) => {
-            conn.on("data", (data) => {
-                console.log(data);
-            });
-            conn.on("open", () => {
-                conn.send("hello!");
+            conn.on("data", (receivedMsg) => {
+                chatList.push(<p key={chatList.length} className="message">{receivedMsg}</p>);
+                setChatList([...chatList]);
             });
         });
     }, [])
+
+    function handleSendMsg() {
+        //console.log(peer);
+
+        peerconn.send(msg);
+        chatList.push(<p key={chatList.length} className="message is_sent">{msg}</p>);
+        setChatList([...chatList]);
+    }
 
     const RenderChatSidebar = () => {
         let list = []
@@ -57,10 +80,10 @@ export function Chat() {
     }
 
     const RenderChat = () => {
-        let list = []
-        for (let i = 0; i < 5; i++)
-            list.push(<p key={i} className="message is_sent">Lorem, ipsum dolor sit am...lorem Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum alias earum ipsam sit nulla natus officiis dolorum placeat cum laborum, velit blanditiis porro eligendi aut perspiciatis dicta minima, a enim?</p>)
-        return list;
+        // let list = []
+        // for (let i = 0; i < 5; i++)
+        //     list.push(<p key={i} className="message is_sent">Lorem, ipsum dolor sit am...lorem Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum alias earum ipsam sit nulla natus officiis dolorum placeat cum laborum, velit blanditiis porro eligendi aut perspiciatis dicta minima, a enim?</p>)
+        return chatList;
     }
 
     useEffect(() => {
@@ -87,7 +110,7 @@ export function Chat() {
     return (
         <React.Fragment>
             <div className="chat_ctn">
-                <Search trigger={searchModal} setTrigger={setSearchModal} />
+                <Search trigger={searchModal} setTrigger={setSearchModal} setOtherId={setOtherId} />
                 <div className="header">
                     <h1>
                         <i className="fa-brands fa-rocketchat"></i>
@@ -107,9 +130,9 @@ export function Chat() {
                         <i className="fa-regular fa-circle-user"></i>
                         <span>{username}</span>
                     </div>
-                    <div className="chat_area">
+                    <div className="chat_area" ref={chatAreaRef}>
                         <RenderChat />
-                        <p className="message">Lorem, ipsum dolor sit am...lorem Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum alias earum ipsam sit nulla natus officiis dolorum placeat cum laborum, velit blanditiis porro eligendi aut perspiciatis dicta minima, a enim?</p>
+                        {/* <p className="message">Lorem, ipsum dolor sit am...lorem Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum alias earum ipsam sit nulla natus officiis dolorum placeat cum laborum, velit blanditiis porro eligendi aut perspiciatis dicta minima, a enim?</p> */}
                     </div>
                     <div className="text_area">
                         <input className="choose_file" type="file" />
@@ -119,7 +142,7 @@ export function Chat() {
                             type="text" placeholder="Aa"
                             onChange={e => setMsg(e.target.value)}
                         />
-                        <i className="fa-solid fa-arrow-right-to-bracket"></i>
+                        <i className="fa-solid fa-arrow-right-to-bracket" onClick={handleSendMsg}></i>
                     </div>
                 </div>
             </div>
