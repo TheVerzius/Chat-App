@@ -11,33 +11,26 @@ export function Signup(props) {
 
   useEffect(() => {
     socket.on("RES_SIGN_UP", status => {
-      if (status === true)
-      {
+      if (status === true) {
         props.setTrigger(false);
         alert("Đăng ký thành công!");
         setEmail("");
         setUsername("");
         setPassword("");
         setRepassword("");
-      }
-      else
-      {
+      } else {
         alert("Đăng ký thất bại!\nVui lòng thử lại!");
       }
     })
   }, [])
 
   async function handleSignUp() {
-    //props.setTrigger(false);
-
-    if (password !== repassword)
-    {
+    if (password !== repassword) {
       alert("Mật khẩu nhập lại không khớp!");
       return;
     }
 
-    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
-    {
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       alert("Vui lòng kiểm tra lại định dạng email!");
       return;
     }

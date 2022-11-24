@@ -15,12 +15,9 @@ export function Login() {
 
   useEffect(() => {
     socket.on("RES_LOGIN", id => {
-      if (id === "-1")
-      {
+      if (id === "-1") {
         alert("Vui lòng kiểm tra lại tài khoản và mật khẩu");
-      }
-      else
-      {
+      } else {
         localStorage.setItem("id", id);
         // setPeer(new Peer(id));
         navigate("../chat");
