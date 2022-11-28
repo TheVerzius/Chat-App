@@ -169,21 +169,16 @@ export function Chat() {
     const handleFile = async (e) => {
         const file = e.target.files[0];
         const filename = file.name;
-        console.log(filename)
-        let i;
-        for (i = filename.length - 1; i >= 0; i--)
-        {
-            if (filename[i] == '.')
-            {
-                break;
-            }
-        }
-        const extension = filename.substring(i, filename.length);
-        console.log(extension)
+        const extension = file.type;
 
-        //setFile(file);
+
+
         const byteFile = await getAsByteArray(file)
-        //console.log(byteFile)
+        let blob = new Blob([byteFile], { extension });// change resultByte to bytes
+        setChatList(prev => [...prev, <p key={prev.length} className="message is_sent">
+            <a href={window.URL.createObjectURL(blob)} download={filename}>{filename}</a>
+        </p>]);
+
         peerconn.send({
             type: 'file',
             filename,
