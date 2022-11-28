@@ -107,13 +107,20 @@ io.on("connection", socket => {
 
 	socket.on("GET_INFO_BY_NAME", name => {
 		let user = userList.filter(item => item.un === name)[0];
-		if (user)
+		if (user !== [])
 		{
 			socket.emit("RES_GET_INFO_BY_NAME", {
 				id: user.id,
 				username: user.un,
 				email: user.email,
 				friendList: user.friendList
+			});
+		}
+		else
+		{
+			socket.emit("RES_GET_INFO_BY_NAME", {
+				id: "-1",
+				username: null
 			});
 		}
 	})

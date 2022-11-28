@@ -22,7 +22,8 @@ export function Login() {
       else
       {
         localStorage.setItem("id", id);
-        // setPeer(new Peer(id));
+        localStorage.removeItem("other_id");
+        localStorage.removeItem("other_username");
         navigate("../chat");
       }
     });
