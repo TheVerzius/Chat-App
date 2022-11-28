@@ -19,6 +19,9 @@ export function Chat() {
     const videoRef = useRef(null);
     const otherVideoRef = useRef(null);
 
+    //
+    const [isCalling, setIsCalling] = useState(false);
+    //
     const socket = useAppContext().socket;
     const [otherId, setOtherId] = useState();
     const [otherUN, setOtherUN] = useState("Chưa chọn người nhận");
@@ -132,46 +135,46 @@ export function Chat() {
         });
     });
 
-    // const makeCall = () => {
-    //     var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    const makeCall = () => {
+        setIsCalling(true);
+        var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-    //     getUserMedia({ video: true, audio: true }, (mediaStream) => {
+        getUserMedia({ video: true, audio: true }, (mediaStream) => {
 
-    //         videoRef.current.srcObject = mediaStream;
-    //         videoRef.current.play();
+            videoRef.current.srcObject = mediaStream;
+            videoRef.current.play();
 
-    //         const call = peer.call(otherId, mediaStream)
+            const call = peer.call(otherId, mediaStream)
 
-    //         call.on('stream', (remoteStream) => {
-    //             otherVideoRef.current.srcObject = remoteStream
-    //             otherVideoRef.current.play();
-    //         });
-    //     });
-    // }
+            call.on('stream', (remoteStream) => {
+                otherVideoRef.current.srcObject = remoteStream
+                otherVideoRef.current.play();
+            });
+        });
+    }
 
-    // useEffect(() => {
-    //     peer.on('call', (call) => {
-    //         var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    useEffect(() => {
+        peer.on('call', (call) => {
+            setIsCalling(true);
+            var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-    //         getUserMedia({ video: true, audio: true }, (mediaStream) => {
-    //             videoRef.current.srcObject = mediaStream;
-    //             videoRef.current.play();
-    //             call.answer(mediaStream)
-    //             call.on('stream', function (remoteStream) {
-    //                 otherVideoRef.current.srcObject = remoteStream
-    //                 otherVideoRef.current.play();
-    //             });
-    //         });
-    //     })
-    // }, [])
+            getUserMedia({ video: true, audio: true }, (mediaStream) => {
+                videoRef.current.srcObject = mediaStream;
+                videoRef.current.play();
+                call.answer(mediaStream)
+                call.on('stream', function (remoteStream) {
+                    otherVideoRef.current.srcObject = remoteStream
+                    otherVideoRef.current.play();
+                });
+            });
+        })
+    }, [])
 
 
     const handleFile = async (e) => {
         const file = e.target.files[0];
         const filename = file.name;
         const extension = file.type;
-
-
 
         const byteFile = await getAsByteArray(file)
         let blob = new Blob([byteFile], { extension });// change resultByte to bytes
@@ -204,6 +207,10 @@ export function Chat() {
         })
     }
 
+    const handleEndCall = () => {
+        setIsCalling(false);
+    }
+
     return (
         <React.Fragment>
             <div className="chat_ctn">
@@ -221,7 +228,8 @@ export function Chat() {
                         MYCHAT
                     </h1>
                     <div className="header_user">
-                        {/* <span onClick={makeCall}>Call</span> */}
+                        {isCalling ? (<span onClick={handleEndCall} style={{ marginRight: 10 }}>End Call</span>) : ""}
+                        <span onClick={makeCall} style={{ marginRight: 10 }}>Call</span>
                         <i className="fa-solid fa-circle-plus" onClick={() => { setSearchModal(true); }}></i>
                         <i className="fa-regular fa-circle-user" onClick={() => { navigate("../") }}></i>
                         <span>{username}</span>
@@ -237,8 +245,19 @@ export function Chat() {
                         <span>{otherUN}</span>
                     </div>
                     <div className="chat_area" ref={chatAreaRef}>
-                        {chatList}
-                        {/* <p className="message">Lorem, ipsum dolor sit am...lorem Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum alias earum ipsam sit nulla natus officiis dolorum placeat cum laborum, velit blanditiis porro eligendi aut perspiciatis dicta minima, a enim?</p> */}
+                        {!isCalling ?
+                            (chatList) :
+                            (
+                                <>
+
+                                    <div className="call_cont">
+                                        <video ref={videoRef} />
+                                        <video ref={otherVideoRef} />
+                                    </div>
+                                </>
+                            )
+                        }
+
                     </div>
                     <div className="text_area">
                         <input className="choose_file" type="file" onChange={handleFile} />

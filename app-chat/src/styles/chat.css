@@ -130,6 +130,34 @@
   display: none;
 }
 
+.call_cont {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.call_cont video {
+  width: 40%;
+}
+
+.btn_endcall {
+  outline: none;
+  float: right;
+  border: none;
+  height: 7rem;
+  width: 30%;
+  font-size: 3em;
+  font-weight: 600;
+  background-color: #007EA790;
+  color: #fff;
+  border-radius: 10px;
+}
+
+.btn_endcall:hover {
+  box-shadow: 5px 5px 14px 5px #888888;
+  transition: .2s;
+}
+
 .content_user {
   position: fixed;
   width: 100%;
